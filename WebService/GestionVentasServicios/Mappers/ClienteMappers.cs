@@ -9,6 +9,7 @@ namespace GestionVentasServicios.Mappers
 {
     public static class ClienteMappers
     {
+        // Mappers para convertir entre Cliente y ClienteDTO
         public static ClienteDTO ToClienteDTO(this Cliente cliente)
         {
             return new ClienteDTO
@@ -25,6 +26,7 @@ namespace GestionVentasServicios.Mappers
             };
         }
         
+        // Mappers para convertir entre ClienteCreateDTO y Cliente
         public static Cliente ToClienteFromCreateDTO(this CreateClienteDTO clienteDto)
         {
             return new Cliente
