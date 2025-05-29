@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GestionVentasServicios.Data;
 using GestionVentasServicios.DTO.Cliente;
 using GestionVentasServicios.Mappers;
+using GestionVentasServicios.Services; // Add this line if IClienteService is in the Services namespace
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,29 +15,29 @@ namespace GestionVentasServicios.Controllers
     [Route("api/[controller]")]
     public class ClienteController : Controller
     {
-        private readonly ApplicationDBContext _context;
+        private readonly IClienteService _clienteService;
 
-        public ClienteController(ApplicationDBContext context)
+        public ClienteController(IClienteService clienteService)
         {
-            _context = context;
+            _clienteService = clienteService;
         }
 
         [HttpGet]
         public IActionResult GetClientes()
         {
-            var clientes = _context.Clientes.ToList().Select(c => c.ToClienteDTO());
+            var clientes = _clienteService.GetAll();
             return Ok(clientes);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetCliente([FromRoute] int id)
         {
-            var cliente = _context.Clientes.Find(id);
+            var cliente = _clienteService.GetById(id);
             if (cliente == null)
             {
                 return NotFound();
             }
-            return Ok(cliente.ToClienteDTO());
+            return Ok(cliente);
         }
 
         [HttpPost]
@@ -46,11 +47,8 @@ namespace GestionVentasServicios.Controllers
             {
                 return BadRequest("Cliente data is null.");
             }
-            var clienteModel = clienteDto.ToClienteFromCreateDTO();
-            _context.Clientes.Add(clienteModel);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetCliente), new { id = clienteModel.Id }, clienteModel.ToClienteDTO());
+            var createdCliente = _clienteService.Create(clienteDto);
+            return CreatedAtAction(nameof(GetCliente), new { id = createdCliente.Id }, createdCliente);
         }
     }
 }

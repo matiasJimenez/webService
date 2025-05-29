@@ -25,7 +25,7 @@ namespace GestionVentasServicios.Mappers
                 Direccion = cliente.Direccion
             };
         }
-        
+
         // Mappers para convertir entre ClienteCreateDTO y Cliente
         public static Cliente ToClienteFromCreateDTO(this CreateClienteDTO clienteDto)
         {
@@ -39,6 +39,39 @@ namespace GestionVentasServicios.Mappers
                 Telefono = clienteDto.Telefono,
                 Direccion = clienteDto.Direccion
             };
+        }
+        
+        // Mapper para convertir entre ClienteUpdateDTO y Cliente
+        /*public static void UpdateClienteFromDTO(this Cliente cliente, UpdateClienteDTO clienteDto)
+        {
+            cliente.Nombre = clienteDto.Nombre;
+            cliente.Apellido = clienteDto.Apellido;
+            cliente.Email = clienteDto.Email;
+            cliente.TipoDocumento = clienteDto.TipoDocumento;
+            cliente.NumeroDocumento = clienteDto.NumeroDocumento;
+            cliente.Telefono = clienteDto.Telefono;
+            cliente.Direccion = clienteDto.Direccion;
+        }
+
+        // Mapper para convertir Cliente a UpdateClienteDTO (opcional)
+        public static UpdateClienteDTO ToUpdateClienteDTO(this Cliente cliente)
+        {
+            return new UpdateClienteDTO
+            {
+                Nombre = cliente.Nombre,
+                Apellido = cliente.Apellido,
+                Email = cliente.Email,
+                TipoDocumento = cliente.TipoDocumento,
+                NumeroDocumento = cliente.NumeroDocumento,
+                Telefono = cliente.Telefono,
+                Direccion = cliente.Direccion
+            };
+        }*/
+
+        // Mapper para convertir una lista de Cliente a una lista de ClienteDTO
+        public static List<ClienteDTO> ToClienteDTOList(this IEnumerable<Cliente> clientes)
+        {
+            return clientes.Select(c => c.ToClienteDTO()).ToList();
         }
     }
 }
