@@ -74,7 +74,9 @@
             "related": ".xml"
           }
         },
-        "frameworkReferences": ["Microsoft.AspNetCore.App"]
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
@@ -958,7 +960,9 @@
             "related": ".pdb;.xml"
           }
         },
-        "frameworkReferences": ["Microsoft.AspNetCore.App"]
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "Swashbuckle.AspNetCore.SwaggerGen/6.6.2": {
         "type": "package",
@@ -988,7 +992,9 @@
             "related": ".pdb;.xml"
           }
         },
-        "frameworkReferences": ["Microsoft.AspNetCore.App"]
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "System.CodeDom/4.4.0": {
         "type": "package",
@@ -4575,14 +4581,18 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/matiasjimenezsalice/repo/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
+      "projectUniqueName": "/Users/matiasjimenezsalice/repo/webService/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
       "projectName": "GestionVentasServicios",
-      "projectPath": "/Users/matiasjimenezsalice/repo/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
+      "projectPath": "/Users/matiasjimenezsalice/repo/webService/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
       "packagesPath": "/Users/matiasjimenezsalice/.nuget/packages/",
-      "outputPath": "/Users/matiasjimenezsalice/repo/WebService/GestionVentasServicios/obj/",
+      "outputPath": "/Users/matiasjimenezsalice/repo/webService/WebService/GestionVentasServicios/obj/",
       "projectStyle": "PackageReference",
-      "configFilePaths": ["/Users/matiasjimenezsalice/.nuget/NuGet/NuGet.Config"],
-      "originalTargetFrameworks": ["net8.0"],
+      "configFilePaths": [
+        "/Users/matiasjimenezsalice/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
@@ -4593,7 +4603,9 @@
         }
       },
       "warningProperties": {
-        "warnAsError": ["NU1605"]
+        "warnAsError": [
+          "NU1605"
+        ]
       },
       "restoreAuditProperties": {
         "enableAudit": "true",
@@ -4622,7 +4634,15 @@
             "version": "[6.6.2, )"
           }
         },
-        "imports": ["net461", "net462", "net47", "net471", "net472", "net48", "net481"],
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
         "assetTargetFallback": true,
         "warn": true,
         "frameworkReferences": {

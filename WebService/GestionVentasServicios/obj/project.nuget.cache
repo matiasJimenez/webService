@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "h3NyLBVQ6fM=",
+  "dgSpecHash": "3YVDTtxGeV0=",
   "success": true,
-  "projectFilePath": "/Users/matiasjimenezsalice/repo/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
+  "projectFilePath": "/Users/matiasjimenezsalice/repo/webService/WebService/GestionVentasServicios/GestionVentasServicios.csproj",
   "expectedPackageFiles": [
     "/Users/matiasjimenezsalice/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/Users/matiasjimenezsalice/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",
