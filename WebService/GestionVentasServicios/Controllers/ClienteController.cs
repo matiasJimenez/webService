@@ -50,5 +50,37 @@ namespace GestionVentasServicios.Controllers
             var createdCliente = _clienteService.Create(clienteDto);
             return CreatedAtAction(nameof(GetCliente), new { id = createdCliente.Id }, createdCliente);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateCliente([FromRoute] int id, [FromBody] UpdateClienteDTO clienteDto)
+        {
+            if (clienteDto == null || clienteDto.Id != id)
+            {
+                return BadRequest("Datos de cliente inválidos o el Id no coincide.");
+            }
+            try
+            {
+                var updatedCliente = _clienteService.Update(clienteDto);
+                return Ok(updatedCliente);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCliente([FromRoute] int id)
+        {
+            try
+            {
+                _clienteService.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

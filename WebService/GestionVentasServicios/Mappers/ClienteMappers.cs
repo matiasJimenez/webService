@@ -9,7 +9,7 @@ namespace GestionVentasServicios.Mappers
 {
     public static class ClienteMappers
     {
-        // Mappers para convertir entre Cliente y ClienteDTO
+        // Mappers para convertir de Cliente a ClienteDTO
         public static ClienteDTO ToClienteDTO(this Cliente cliente)
         {
             return new ClienteDTO
@@ -26,7 +26,7 @@ namespace GestionVentasServicios.Mappers
             };
         }
 
-        // Mappers para convertir entre ClienteCreateDTO y Cliente
+        // Mappers para convertir de ClienteCreateDTO a Cliente
         public static Cliente ToClienteFromCreateDTO(this CreateClienteDTO clienteDto)
         {
             return new Cliente
@@ -42,15 +42,22 @@ namespace GestionVentasServicios.Mappers
         }
         
         // Mapper para convertir entre ClienteUpdateDTO y Cliente
-        /*public static void UpdateClienteFromDTO(this Cliente cliente, UpdateClienteDTO clienteDto)
+        public static void UpdateClienteFromDTO(this Cliente cliente, UpdateClienteDTO clienteDto)
         {
-            cliente.Nombre = clienteDto.Nombre;
-            cliente.Apellido = clienteDto.Apellido;
-            cliente.Email = clienteDto.Email;
-            cliente.TipoDocumento = clienteDto.TipoDocumento;
-            cliente.NumeroDocumento = clienteDto.NumeroDocumento;
-            cliente.Telefono = clienteDto.Telefono;
-            cliente.Direccion = clienteDto.Direccion;
+            if (!string.IsNullOrEmpty(clienteDto.Nombre))
+                cliente.Nombre = clienteDto.Nombre;
+            if (!string.IsNullOrEmpty(clienteDto.Apellido))
+                cliente.Apellido = clienteDto.Apellido;
+            if (!string.IsNullOrEmpty(clienteDto.Email))
+                cliente.Email = clienteDto.Email;
+            if (clienteDto.TipoDocumento.HasValue)
+                cliente.TipoDocumento = clienteDto.TipoDocumento.Value;
+            if (!string.IsNullOrEmpty(clienteDto.NumeroDocumento))
+                cliente.NumeroDocumento = clienteDto.NumeroDocumento;
+            if (!string.IsNullOrEmpty(clienteDto.Telefono))
+                cliente.Telefono = clienteDto.Telefono;
+            if (!string.IsNullOrEmpty(clienteDto.Direccion))
+                cliente.Direccion = clienteDto.Direccion;
         }
 
         // Mapper para convertir Cliente a UpdateClienteDTO (opcional)
@@ -58,6 +65,7 @@ namespace GestionVentasServicios.Mappers
         {
             return new UpdateClienteDTO
             {
+                Id = cliente.Id,
                 Nombre = cliente.Nombre,
                 Apellido = cliente.Apellido,
                 Email = cliente.Email,
@@ -66,7 +74,7 @@ namespace GestionVentasServicios.Mappers
                 Telefono = cliente.Telefono,
                 Direccion = cliente.Direccion
             };
-        }*/
+        }
 
         // Mapper para convertir una lista de Cliente a una lista de ClienteDTO
         public static List<ClienteDTO> ToClienteDTOList(this IEnumerable<Cliente> clientes)

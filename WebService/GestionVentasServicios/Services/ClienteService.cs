@@ -35,5 +35,26 @@ namespace GestionVentasServicios.Services
             _context.SaveChanges();
             return cliente.ToClienteDTO();
         }
+
+        public ClienteDTO Update(UpdateClienteDTO clienteDto)
+        {
+            var cliente = _context.Clientes.Find(clienteDto.Id);
+            if (cliente == null)
+            {
+                throw new Exception($"Cliente con Id {clienteDto.Id} no encontrado");
+            }
+            cliente.UpdateClienteFromDTO(clienteDto);
+            _context.SaveChanges();
+            return cliente.ToClienteDTO();
+        }
+
+        public void Delete(int id)
+        {
+            var cliente = _context.Clientes.Find(id);
+            if (cliente == null)
+                throw new Exception($"Cliente con Id {id} no encontrado");
+            _context.Clientes.Remove(cliente);
+            _context.SaveChanges();
+        }
     }
 }

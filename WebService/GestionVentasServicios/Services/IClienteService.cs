@@ -11,5 +11,7 @@ namespace GestionVentasServicios.Services
         IEnumerable<ClienteDTO> GetAll();
         ClienteDTO GetById(int id);
         ClienteDTO Create(CreateClienteDTO clienteDto);
+        ClienteDTO Update(UpdateClienteDTO clienteDto);
+        void Delete(int id);
     }
 }
