@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GestionVentasServicios.Data;
 using GestionVentasServicios.DTO.PlanVenta;
-using GestionVentasServicios.Models;
 using GestionVentasServicios.Mappers;
 
 namespace GestionVentasServicios.Services
@@ -25,7 +24,7 @@ namespace GestionVentasServicios.Services
         public PlanVentaDTO GetById(int id)
         {
             var plan = _context.PlanVentas.Find(id);
-            return plan != null ? plan.ToPlanVentaDTO() : null;
+            return plan != null ? plan.ToPlanVentaDTO() : new PlanVentaDTO();
         }
 
         public PlanVentaDTO Create(CreatePlanVentaDTO planVentaDto)

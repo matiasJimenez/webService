@@ -27,7 +27,9 @@ namespace GestionVentasServicios.Controllers
         {
             var plan = _planVentaService.GetById(id);
             if (plan == null)
+            {
                 return NotFound();
+            }
             return Ok(plan);
         }
 
