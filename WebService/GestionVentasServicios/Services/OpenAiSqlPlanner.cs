@@ -12,48 +12,21 @@ namespace GestionVentasServicios.Services
 {
     public class OpenAiSqlPlanner : IAiSqlPlanner
     {
-        private readonly HttpClient _httpClient;
-        private readonly OpenAiOptions _options;
+        private readonly ILlmChatClient _llmClient;
 
-        public OpenAiSqlPlanner(HttpClient httpClient, IOptions<OpenAiOptions> options)
+        public OpenAiSqlPlanner(ILlmChatClient llmClient)
         {
-            _httpClient = httpClient;
-            _options = options.Value;
+            _llmClient = llmClient;
         }
 
         public async Task<AiQueryPlan?> BuildPlanAsync(string naturalLanguageQuery, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(_options.ApiKey))
-            {
-                throw new InvalidOperationException("Configura OpenAI:ApiKey en appsettings.json o como variable de entorno OPENAI__APIKEY.");
-            }
-
-            var endpoint = $"{_options.BaseUrl?.TrimEnd('/')}/chat/completions";
             var systemPrompt = BuildSystemPrompt();
-            var payload = new
+            var content = await _llmClient.SendAsync(new[]
             {
-                model = string.IsNullOrWhiteSpace(_options.Model) ? "gpt-4o-mini" : _options.Model,
-                messages = new object[]
-                {
-                    new { role = "system", content = systemPrompt },
-                    new { role = "user", content = naturalLanguageQuery }
-                },
-                temperature = 0,
-                response_format = new { type = "json_object" }
-            };
-
-            var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
-            };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
-
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            var completion = JsonDocument.Parse(body);
-            var content = completion.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                ("system", systemPrompt),
+                ("user", naturalLanguageQuery)
+            }, jsonResponse: true, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(content))
             {
