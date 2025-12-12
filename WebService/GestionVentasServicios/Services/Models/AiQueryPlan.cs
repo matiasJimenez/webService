@@ -8,6 +8,9 @@ namespace GestionVentasServicios.Services.Models
         public List<string> Select { get; set; } = new();
         public List<AiQueryFilter> Filters { get; set; } = new();
         public int? Limit { get; set; }
+        public string? OrderBy { get; set; }
+        public string? OrderDirection { get; set; } = "asc";
+        public string Operation { get; set; } = "query"; // query | count
     }
 
     public class AiQueryFilter

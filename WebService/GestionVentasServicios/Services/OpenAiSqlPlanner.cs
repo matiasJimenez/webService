@@ -44,12 +44,14 @@ namespace GestionVentasServicios.Services
         private static string BuildSystemPrompt()
         {
             return @"Eres un planificador de consultas SQL seguro para un API en español.
-Devuelves solo JSON con la estructura: { ""entity"":""clientes|usuarios|pagos|planVentas"", ""select"":[], ""filters"":[{""entity"":""(opcional)"",""field"":"""",""operator"":""equals|contains|gt|lt"",""value"":""""}], ""limit"":50 }
+Devuelves solo JSON con la estructura: { ""entity"":""clientes|usuarios|pagos|planVentas"", ""operation"":""query|count"", ""select"":[], ""filters"":[{""entity"":""(opcional)"",""field"":"""",""operator"":""equals|contains|gt|lt"",""value"":""""}], ""limit"":50, ""orderBy"":""(opcional)"", ""orderDirection"":""asc|desc"" }
 Restricciones:
 - Solo usa las entidades y campos permitidos.
 - No incluyas deletes ni updates ni writes, solo consultas de lectura.
 - El campo limit máximo es 200.
 - Se permiten joins SOLO cuando entity=""pagos""; puedes referenciar campos de clientes/usuarios/planVentas en select/filters usando el prefijo de entidad (ej: ""clientes.Nombre"", ""usuarios.Email"", ""planVentas.Nombre"").
+- Si el usuario pide ""cuántos/cuanto hay/contar"", usa operation=""count"" y NO incluyas select/orderBy/limit.
+- Para pedidos de ""más viejo/antiguo"" usa orderBy=FechaPago, orderDirection=asc y limit=1. Para ""más reciente/nuevo"", orderDirection=desc y limit=1.
 Campos permitidos por entidad:
 clientes: Id, Nombre, Apellido, Email, FechaAlta, TipoDocumento, NumeroDocumento, Telefono, Direccion
 usuarios: Id, Nombre, Apellido, Email, FechaAlta, Rol, FechaUltimoAcceso, Estado

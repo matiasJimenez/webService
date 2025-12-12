@@ -80,13 +80,25 @@ namespace GestionVentasServicios.Services
             {
                 case "cliente":
                 case "clientes":
+                    if (IsCount(plan))
+                    {
+                        var clientesCount = await ApplyFilters(_dbContext.Clientes.AsQueryable(), plan.Filters).CountAsync(cancellationToken);
+                        return new { count = clientesCount };
+                    }
                     var clientesQuery = ApplyFilters(_dbContext.Clientes.AsQueryable(), plan.Filters);
+                    clientesQuery = ApplyOrdering(clientesQuery, plan.OrderBy, plan.OrderDirection);
                     var clientes = await clientesQuery.Take(limit).ToListAsync(cancellationToken);
                     return ShapeResults(clientes, plan.Select);
 
                 case "usuario":
                 case "usuarios":
+                    if (IsCount(plan))
+                    {
+                        var usuariosCount = await ApplyFilters(_dbContext.Usuarios.AsQueryable(), plan.Filters).CountAsync(cancellationToken);
+                        return new { count = usuariosCount };
+                    }
                     var usuariosQuery = ApplyFilters(_dbContext.Usuarios.AsQueryable(), plan.Filters);
+                    usuariosQuery = ApplyOrdering(usuariosQuery, plan.OrderBy, plan.OrderDirection);
                     var usuarios = await usuariosQuery.Take(limit).ToListAsync(cancellationToken);
                     return ShapeResults(usuarios, plan.Select);
 
@@ -99,7 +111,13 @@ namespace GestionVentasServicios.Services
                 case "planventas":
                 case "plan_venta":
                 case "plan_ventas":
+                    if (IsCount(plan))
+                    {
+                        var planesCount = await ApplyFilters(_dbContext.PlanVentas.AsQueryable(), plan.Filters).CountAsync(cancellationToken);
+                        return new { count = planesCount };
+                    }
                     var planesQuery = ApplyFilters(_dbContext.PlanVentas.AsQueryable(), plan.Filters);
+                    planesQuery = ApplyOrdering(planesQuery, plan.OrderBy, plan.OrderDirection);
                     var planes = await planesQuery.Take(limit).ToListAsync(cancellationToken);
                     return ShapeResults(planes, plan.Select);
 
@@ -138,7 +156,7 @@ namespace GestionVentasServicios.Services
             public PlanVenta? PlanVenta { get; set; }
         }
 
-        private async Task<IEnumerable<object>> ExecutePagoPlanAsync(AiQueryPlan plan, int limit, CancellationToken cancellationToken)
+        private async Task<object> ExecutePagoPlanAsync(AiQueryPlan plan, int limit, CancellationToken cancellationToken)
         {
             // Traemos pagos con left joins a las entidades relacionadas conocidas
             var query =
@@ -152,6 +170,13 @@ namespace GestionVentasServicios.Services
                 select new JoinedPago { Pago = p, Cliente = c, Usuario = u, PlanVenta = pv };
 
             query = ApplyPagoFilters(query, plan.Filters);
+            query = ApplyPagoOrdering(query, plan.OrderBy, plan.OrderDirection);
+
+            if (IsCount(plan))
+            {
+                var count = await query.CountAsync(cancellationToken);
+                return new { count };
+            }
 
             var pagos = await query.Take(limit).ToListAsync(cancellationToken);
             return ShapePagoResults(pagos, plan.Select);
@@ -204,6 +229,38 @@ namespace GestionVentasServicios.Services
 
             return source;
         }
+
+        private static IQueryable<JoinedPago> ApplyPagoOrdering(IQueryable<JoinedPago> source, string? orderBy, string? orderDirection)
+        {
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                return source;
+            }
+
+            var (entity, fieldName) = ParseEntityAndField(new AiQueryFilter { Field = orderBy });
+            var parameter = Expression.Parameter(typeof(JoinedPago), "x");
+            if (!TryGetPagoPropertyExpression(parameter, entity, fieldName, out var propertyAccess, out var propertyType, out _))
+            {
+                return source;
+            }
+
+            var lambda = Expression.Lambda(propertyAccess, parameter);
+            var method = string.Equals(orderDirection, "desc", StringComparison.OrdinalIgnoreCase)
+                ? nameof(Queryable.OrderByDescending)
+                : nameof(Queryable.OrderBy);
+
+            var resultExpression = Expression.Call(
+                typeof(Queryable),
+                method,
+                new[] { typeof(JoinedPago), propertyType },
+                source.Expression,
+                Expression.Quote(lambda));
+
+            return source.Provider.CreateQuery<JoinedPago>(resultExpression);
+        }
+
+        private static bool IsCount(AiQueryPlan plan) =>
+            string.Equals(plan.Operation, "count", StringComparison.OrdinalIgnoreCase);
 
         private static (string entity, string field) ParseEntityAndField(AiQueryFilter filter)
         {
@@ -369,6 +426,37 @@ namespace GestionVentasServicios.Services
             }
 
             return source;
+        }
+
+        private static IQueryable<T> ApplyOrdering<T>(IQueryable<T> source, string? orderBy, string? orderDirection)
+        {
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                return source;
+            }
+
+            var property = typeof(T).GetProperty(orderBy, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            if (property == null)
+            {
+                return source;
+            }
+
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var propertyAccess = Expression.Property(parameter, property);
+
+            var lambda = Expression.Lambda(propertyAccess, parameter);
+            var method = string.Equals(orderDirection, "desc", StringComparison.OrdinalIgnoreCase)
+                ? nameof(Queryable.OrderByDescending)
+                : nameof(Queryable.OrderBy);
+
+            var resultExpression = Expression.Call(
+                typeof(Queryable),
+                method,
+                new[] { typeof(T), property.PropertyType },
+                source.Expression,
+                Expression.Quote(lambda));
+
+            return source.Provider.CreateQuery<T>(resultExpression);
         }
 
         private static Expression? BuildComparisonExpression(Expression propertyAccess, string @operator, object typedValue, Type propertyType)
